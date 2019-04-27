@@ -7,7 +7,18 @@
         xmlns:ig="http://schemas.infragistics.com/xaml"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-            <ig:XamPivotGrid />
+    <Grid DockPanel.Dock="Bottom">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*" x:Name="ReportColumn"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*" x:Name="ExpanderColumn"/>
+        </Grid.ColumnDefinitions>
+
+        <ig:XamPivotGrid DataSource="{Binding FlatDataSource.Result}" />
+
+        <GridSplitter Grid.Column="1" Width="5" ResizeBehavior="PreviousAndNext" ResizeDirection="Columns" />
+        <Grid Grid.Column="2">
+            <ig:XamPivotDataSelector Grid.Row="0" x:Name="dataSelector1" DataSource="{Binding Path=FlatDataSource.Result}"  />
+        </Grid>
     </Grid>
 </Window>

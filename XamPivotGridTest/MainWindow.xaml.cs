@@ -23,6 +23,7 @@ namespace XamPivotGridTest
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new ViewModel();
         }
     }
 }

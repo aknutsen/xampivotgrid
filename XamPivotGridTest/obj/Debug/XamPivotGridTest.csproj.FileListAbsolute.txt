@@ -38,3 +38,8 @@ C:\dev\xampivotgridtest\XamPivotGridTest\XamPivotGridTest\obj\Debug\XamPivotGrid
 C:\dev\xampivotgridtest\XamPivotGridTest\XamPivotGridTest\obj\Debug\XamPivotGridTest.csproj.CopyComplete
 C:\dev\xampivotgridtest\XamPivotGridTest\XamPivotGridTest\obj\Debug\XamPivotGridTest.exe
 C:\dev\xampivotgridtest\XamPivotGridTest\XamPivotGridTest\obj\Debug\XamPivotGridTest.pdb
+C:\dev\xampivotgridtest\XamPivotGridTest\XamPivotGridTest\bin\Debug\InfragisticsWPF4.Olap.FlatData.v19.1.dll
+C:\dev\xampivotgridtest\XamPivotGridTest\XamPivotGridTest\bin\Debug\InfragisticsWPF4.Olap.FlatData.v19.1.xml
+C:\dev\xampivotgridtest\XamPivotGridTest\XamPivotGridTest\bin\Debug\de\InfragisticsWPF4.Olap.FlatData.v19.1.resources.dll
+C:\dev\xampivotgridtest\XamPivotGridTest\XamPivotGridTest\bin\Debug\es\InfragisticsWPF4.Olap.FlatData.v19.1.resources.dll
+C:\dev\xampivotgridtest\XamPivotGridTest\XamPivotGridTest\bin\Debug\fr\InfragisticsWPF4.Olap.FlatData.v19.1.resources.dll

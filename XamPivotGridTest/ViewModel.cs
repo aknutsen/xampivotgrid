@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
@@ -24,6 +25,8 @@ namespace XamPivotGridTest
             {
                 _data.Add(new Result{ Name = $"data {i}", StartYear = 2019, Unit = "Money", Values = Enumerable.Range(1, 20).Select(v => (double)v).ToArray()});
             }
+
+            Debug.WriteLine("lol");
 
             var cubeMetadata = new CubeMetadata {DataTypeFullName = typeof(Result).FullName, DisplayName = "Pivot"};
             string[] propertyNames = {"Unit", "Value", "Name"};

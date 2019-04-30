@@ -14,7 +14,7 @@
             <ColumnDefinition Width="*" x:Name="ExpanderColumn"/>
         </Grid.ColumnDefinitions>
 
-        <ig:XamPivotGrid DataSource="{Binding FlatDataSource.Result}" />
+        <ig:XamPivotGrid DataSource="{Binding FlatDataSource.Result}" Grid.ColumnSpan="2" Margin="0,-1,5,0.667" />
 
         <GridSplitter Grid.Column="1" Width="5" ResizeBehavior="PreviousAndNext" ResizeDirection="Columns" />
         <Grid Grid.Column="2">

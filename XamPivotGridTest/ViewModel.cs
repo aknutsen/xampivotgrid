@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Infragistics.Olap;
 using Infragistics.Olap.FlatData;
 
@@ -26,7 +27,6 @@ namespace XamPivotGridTest
             
             var myType = _typeBuilder.GenerateType(fields.Select(f => new DynamicTypePropertyInfo { PropertyName = f, PropertyType = f.Equals("Value") ? typeof(double) : typeof(object) }).ToList());
 
-            var properties = myType.GetProperties();
             for (int i = 0; i <numValues; i++)
             {
                 var obj = Activator.CreateInstance(myType);
@@ -38,12 +38,14 @@ namespace XamPivotGridTest
                 data.Add(obj);
             }
 
-            foreach (var prop in properties.Take(numProperties))
+            foreach (var prop in myType.GetProperties().Take(numProperties))
                 for (int i = 0; i < numValues; i++)
                     prop.SetValue(data[i], GetRandomFrom(values), null);
 
             var cubeMetadata = new CubeMetadata {DataTypeFullName = _typeBuilder.DynamicTypeName, DisplayName = "Pivot"};
+
             fields.ForEach(field => cubeMetadata.DimensionSettings.Add(metadataFactory.Create(field, field, field, field.Equals("Value"))));
+
             FlatDataSource = new FlatDataSource
             {
                 ItemsSource = data,
@@ -71,38 +73,5 @@ namespace XamPivotGridTest
             DynamicAssemblyName = "AppApp",
             DynamicTypeName = "MyDynamicType"
         };
-    }
-
-    public class DimensionMetadataFactory
-    {
-        public DimensionMetadata Create(string propertyName, string propertyPath, string displayName, bool isMeasure)
-        {
-            return new DimensionMetadata
-            {
-                DimensionType = isMeasure ? DimensionType.Measure : DimensionType.Dimension,
-                SourcePropertyName = propertyName,
-                DisplayName = displayName,
-                DisplayFormat = isMeasure ? "{0:#,##0.00}" : null,
-                HierarchyDescriptors = { CreateHierarchyDescriptor(propertyName, propertyPath, displayName) },
-            };
-        }
-
-        private HierarchyDescriptor CreateHierarchyDescriptor(string propertyName, string propertyPath, string displayName)
-        {
-            var hierarchyDescriptor = new HierarchyDescriptor
-            {
-                HierarchyName = displayName,
-                HierarchyDisplayName = displayName,
-                SourcePropertyName = propertyName
-            };
-
-            hierarchyDescriptor.LevelDescriptors.Add(new HierarchyLevelDescriptor
-            {
-                LevelExpressionPath = propertyPath,
-                LevelName = displayName,
-                LevelDisplayName = displayName,
-            });
-            return hierarchyDescriptor;
-        }
     }
 }

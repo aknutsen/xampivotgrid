@@ -3,22 +3,28 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:XamPivotGridTest"
         xmlns:ig="http://schemas.infragistics.com/xaml"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid DockPanel.Dock="Bottom">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*" x:Name="ReportColumn"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*" x:Name="ExpanderColumn"/>
-        </Grid.ColumnDefinitions>
+    <DockPanel LastChildFill="True">
+        <StackPanel Orientation="Horizontal"  DockPanel.Dock="Top">
+            <Button Click="ApplyLayout" Margin="10">Apply Layout</Button>
+            <!--<Button Click="SaveLayout" Margin="10">Print layout</Button>-->
+        </StackPanel>
+        
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" x:Name="ReportColumn"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*" x:Name="ExpanderColumn"/>
+            </Grid.ColumnDefinitions>
 
-        <ig:XamPivotGrid DataSource="{Binding FlatDataSource.Result}" Grid.ColumnSpan="2" Margin="0,-1,5,0.667" />
+            <ig:XamPivotGrid DataSource="{Binding FlatDataSource}" Grid.ColumnSpan="2" Margin="0,-1,5,0.667" />
 
-        <GridSplitter Grid.Column="1" Width="5" ResizeBehavior="PreviousAndNext" ResizeDirection="Columns" />
-        <Grid Grid.Column="2">
-            <ig:XamPivotDataSelector Grid.Row="0" x:Name="dataSelector1" DataSource="{Binding Path=FlatDataSource.Result}"  />
+            <GridSplitter Grid.Column="1" Width="5" ResizeBehavior="PreviousAndNext" ResizeDirection="Columns" />
+            <Grid Grid.Column="2">
+                <ig:XamPivotDataSelector Grid.Row="0" DataSource="{Binding Path=FlatDataSource}"  />
+            </Grid>
         </Grid>
-    </Grid>
+    </DockPanel>
 </Window>

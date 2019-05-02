@@ -1,59 +1,85 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using Infragistics.Olap;
 using Infragistics.Olap.FlatData;
 
 namespace XamPivotGridTest
 {
     public class ViewModel
     {
-        private List<Result> _data;
-
         public FlatDataSource FlatDataSource { get; set; }
 
         public ViewModel()
-        {
+        {            
+            var years = Enumerable.Range(2019, 70).Select(v => v.ToString()).ToArray();
+            var units = new[] {"dollar", "kroner", "euro", "yen"};
+            var reportLevel1 = new[] {"Norway", "Sweden", "Denmark", "Germany", "Finland", "India"};
+            var reportLevel2 = new[] { "City 1", "City 2", "City 3", "City 4", "City 5" };
             var metadataFactory = new DimensionMetadataFactory();
-            _data = new List<Result>();
+            var values = Enumerable.Range(1, 100).Select(v => RandomString(4)).ToArray();
+            var numProperties = 100;
+            var numValues = 750000;
+            
+            List<object> data = new List<object>();
+            List<string> fields = Enumerable.Range(1, numProperties).Select(v => $"Item{v}").Concat(new []{"Value", "ReportLevel1", "ReportLevel2", "Unit", "Year"}).ToList();
+            
+            var myType = _typeBuilder.GenerateType(fields.Select(f => new DynamicTypePropertyInfo { PropertyName = f, PropertyType = f.Equals("Value") ? typeof(double) : typeof(object) }).ToList());
 
-            for (int i = 0; i < 1000; i++)
+            var properties = myType.GetProperties();
+            for (int i = 0; i <numValues; i++)
             {
-                _data.Add(new Result{ Name = $"data {i}", StartYear = 2019, Unit = "Money", Values = Enumerable.Range(1, 20).Select(v => (double)v).ToArray()});
+                var obj = Activator.CreateInstance(myType);
+                myType.GetProperty("Unit").SetValue(obj, GetRandomFrom(units));
+                myType.GetProperty("Year").SetValue(obj, GetRandomFrom(years));
+                myType.GetProperty("ReportLevel1").SetValue(obj, GetRandomFrom(reportLevel1));
+                myType.GetProperty("ReportLevel2").SetValue(obj, GetRandomFrom(reportLevel2));
+                myType.GetProperty("Value").SetValue(obj, 1.0);
+                data.Add(obj);
             }
 
-            Debug.WriteLine("lol");
-
-            var cubeMetadata = new CubeMetadata {DataTypeFullName = typeof(Result).FullName, DisplayName = "Pivot"};
-            string[] propertyNames = {"Unit", "Value", "Name"};
-            foreach (var propName in propertyNames)
+            foreach (var prop in properties.Take(numProperties))
             {
-                var property = metadataFactory.Create(propName, propName, propName, false);
+                for (int i = 0; i <numValues; i++)
+                {
+                    var obj = data[i];
+                    prop.SetValue(obj, GetRandomFrom(values), null);
+                }
+            }
+
+            var cubeMetadata = new CubeMetadata {DataTypeFullName = _typeBuilder.DynamicTypeName, DisplayName = "Pivot"};
+            foreach (var field in fields)
+            {
+                var property = metadataFactory.Create(field, field, field, field.Equals("Value"));
                 cubeMetadata.DimensionSettings.Add(property);
             }
             FlatDataSource = new FlatDataSource
             {
-                ItemsSource = _data,
+                ItemsSource = data,
                 CubesSettings = { cubeMetadata },
                 DimensionsGenerationMode = DimensionsGenerationMode.Metadata,
                 PreserveMembersOrder = false
             };
         }
-    }
 
-    public class Result
-    {
-        public int StartYear { get; set; }
+        private string RandomString(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[_random.Next(s.Length)]).ToArray());
+        }
 
-        public double[] Values { get; set; }
+        private string GetRandomFrom(string[] values)
+        {
+            return values[_random.Next(values.Length)];
+        }
 
-        public string Name { get; set; }
-
-        public string Unit { get; set; }
+        private readonly Random _random = new Random();
+        private readonly DynamicTypeBuilder _typeBuilder = new DynamicTypeBuilder
+        {
+            DynamicAssemblyName = "AppApp",
+            DynamicTypeName = "MyDynamicType"
+        };
     }
 
     public class DimensionMetadataFactory
@@ -79,21 +105,12 @@ namespace XamPivotGridTest
                 SourcePropertyName = propertyName
             };
 
-            var level = new HierarchyLevelDescriptor
+            hierarchyDescriptor.LevelDescriptors.Add(new HierarchyLevelDescriptor
             {
                 LevelExpressionPath = propertyPath,
                 LevelName = displayName,
                 LevelDisplayName = displayName,
-            };
-
-            //if (_sortMappings.ContainsKey(displayName))
-            //{
-            //    var mapping = _sortMappings[displayName];
-            //    level.OrderByKeyExpression = (Expression<Func<object, string>>)(p => GetSortName(p, propertyName, mapping));
-            //}
-
-            hierarchyDescriptor.LevelDescriptors.Add(level);
-
+            });
             return hierarchyDescriptor;
         }
     }

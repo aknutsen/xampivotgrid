@@ -39,20 +39,11 @@ namespace XamPivotGridTest
             }
 
             foreach (var prop in properties.Take(numProperties))
-            {
-                for (int i = 0; i <numValues; i++)
-                {
-                    var obj = data[i];
-                    prop.SetValue(obj, GetRandomFrom(values), null);
-                }
-            }
+                for (int i = 0; i < numValues; i++)
+                    prop.SetValue(data[i], GetRandomFrom(values), null);
 
             var cubeMetadata = new CubeMetadata {DataTypeFullName = _typeBuilder.DynamicTypeName, DisplayName = "Pivot"};
-            foreach (var field in fields)
-            {
-                var property = metadataFactory.Create(field, field, field, field.Equals("Value"));
-                cubeMetadata.DimensionSettings.Add(property);
-            }
+            fields.ForEach(field => cubeMetadata.DimensionSettings.Add(metadataFactory.Create(field, field, field, field.Equals("Value"))));
             FlatDataSource = new FlatDataSource
             {
                 ItemsSource = data,
